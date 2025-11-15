@@ -1,0 +1,118 @@
+/**
+ * Card Component Styles
+ */
+
+.card {
+  background: var(--white);
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-lg);
+  box-shadow: var(--shadow-md);
+  transition: all var(--transition-base);
+}
+
+.card:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
+}
+
+.card-header {
+  margin-bottom: var(--spacing-lg);
+  padding-bottom: var(--spacing-md);
+  border-bottom: 2px solid var(--gray-lightest);
+}
+
+.card-title {
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  color: var(--dark);
+  margin: 0;
+}
+
+.card-body {
+  padding: var(--spacing-md) 0;
+}
+
+.card-footer {
+  margin-top: var(--spacing-lg);
+  padding-top: var(--spacing-md);
+  border-top: 2px solid var(--gray-lightest);
+}
+
+/* Card de total */
+.total-card {
+  background: linear-gradient(135deg, var(--dark), var(--dark-light));
+  color: var(--white);
+  margin-top: auto;
+  padding: var(--spacing-xl);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-xl);
+}
+
+.total-label {
+  font-size: var(--font-size-sm);
+  color: var(--gray-lighter);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: var(--spacing-sm);
+  font-weight: 600;
+}
+
+.total-amount {
+  font-size: var(--font-size-3xl);
+  font-weight: 900;
+  font-family: var(--font-mono);
+  color: var(--secondary-color);
+  text-shadow: 0 2px 10px rgba(46, 204, 113, 0.3);
+  line-height: 1;
+}
+
+.total-items {
+  margin-top: var(--spacing-sm);
+  font-size: var(--font-size-base);
+  color: var(--gray-lighter);
+}
+
+.total-items span {
+  font-weight: 700;
+  color: var(--white);
+  margin-left: var(--spacing-xs);
+}
+
+/* Status card */
+.status-msg {
+  padding: var(--spacing-md);
+  border-radius: var(--border-radius-md);
+  margin-bottom: var(--spacing-md);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  text-align: center;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-base);
+}
+
+.status-msg.error {
+  background: rgba(231, 76, 60, 0.1);
+  color: var(--danger-color);
+  border: 2px solid var(--danger-color);
+}
+
+.status-msg.success {
+  background: rgba(46, 204, 113, 0.1);
+  color: var(--secondary-color);
+  border: 2px solid var(--secondary-color);
+}
+
+.status-msg.info {
+  background: rgba(52, 152, 219, 0.1);
+  color: var(--primary-color);
+  border: 2px solid var(--primary-color);
+}
+
+.status-msg.warning {
+  background: rgba(243, 156, 18, 0.1);
+  color: var(--warning-color);
+  border: 2px solid var(--warning-color);
+}

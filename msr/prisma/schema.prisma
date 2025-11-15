@@ -1,0 +1,109 @@
+// schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite" // Cambio clave: Base de datos local
+  url      = env("DATABASE_URL") // ej: "file:./tienda.db"
+}
+
+// --- ENUMS ---
+// SQLite no soporta Enums nativos, Prisma los emula en el cliente.
+// Esto funciona perfecto en el código NestJS.
+
+// --- EMPLEADOS (Usuarios del Sistema) ---
+model User {
+  id        Int      @id @default(autoincrement())
+  username  String   @unique // Ej: "cajero1"
+  password  String   // Hash
+  name      String   // Nombre real: "Juan Pérez"
+  role      String   // "ADMIN", "CAJERO" (Manejado como string en SQLite)
+  isActive  Boolean  @default(true)
+  
+  sales     Sale[]
+  shifts    CashShift[] 
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// --- INVENTARIO ---
+model Category {
+  id          Int       @id @default(autoincrement())
+  name        String
+  products    Product[]
+}
+
+model Product {
+  id          Int       @id @default(autoincrement())
+  barcode     String    @unique // El escáner busca aquí
+  name        String
+  description String?
+  
+  // DINERO EN SQLITE:
+  // Se recomienda usar Decimal en Prisma, que lo guarda como String/Real en SQLite
+  // para evitar errores de redondeo.
+  costPrice   Decimal
+  salePrice   Decimal
+  
+  currentStock Int      @default(0)
+  minStock     Int      @default(5) 
+  
+  // Soporte para venta a granel (ej. 0.5 kg de jamón)
+  isBulk       Boolean  @default(false) 
+
+  categoryId   Int?
+  category     Category? @relation(fields: [categoryId], references: [id])
+  
+  saleItems    SaleItem[]
+  
+  isActive     Boolean   @default(true)
+}
+
+// --- VENTAS ---
+model Sale {
+  id            Int      @id @default(autoincrement())
+  total         Decimal
+  status        String   // "COMPLETADA", "CANCELADA"
+  paymentMethod String   // "EFECTIVO", "TARJETA"
+  
+  userId        Int      // El empleado que cobró
+  user          User     @relation(fields: [userId], references: [id])
+  
+  shiftId       Int?     // Turno de caja
+  shift         CashShift? @relation(fields: [shiftId], references: [id])
+
+  items         SaleItem[]
+  
+  createdAt     DateTime @default(now())
+}
+
+model SaleItem {
+  id            Int      @id @default(autoincrement())
+  quantity      Decimal  // Decimal por si vendes 0.5kg de algo
+  priceAtTime   Decimal  // Precio congelado al momento de venta
+  
+  saleId        Int
+  sale          Sale     @relation(fields: [saleId], references: [id])
+  
+  productId     Int
+  product       Product  @relation(fields: [productId], references: [id])
+}
+
+// --- CORTE DE CAJA ---
+model CashShift {
+  id              Int       @id @default(autoincrement())
+  
+  startTime       DateTime  @default(now())
+  endTime         DateTime? 
+  
+  startAmount     Decimal   // Fondo inicial
+  endAmount       Decimal?  // Lo que contó el cajero al cierre
+  
+  userId          Int
+  user            User      @relation(fields: [userId], references: [id])
+  
+  sales           Sale[]
+}

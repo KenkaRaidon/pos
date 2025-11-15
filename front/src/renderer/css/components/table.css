@@ -1,0 +1,113 @@
+/**
+ * Table Component Styles
+ */
+
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+  background: var(--white);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--font-size-base);
+}
+
+thead {
+  background: linear-gradient(135deg, var(--dark), var(--dark-light));
+  color: var(--white);
+}
+
+th {
+  text-align: left;
+  padding: var(--spacing-md) var(--spacing-lg);
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: var(--font-size-sm);
+  letter-spacing: 0.5px;
+  border-bottom: 2px solid var(--primary-color);
+}
+
+th:first-child {
+  border-radius: var(--border-radius-md) 0 0 0;
+}
+
+th:last-child {
+  border-radius: 0 var(--border-radius-md) 0 0;
+}
+
+tbody tr {
+  border-bottom: 1px solid var(--gray-lightest);
+  transition: background var(--transition-fast);
+}
+
+tbody tr:hover {
+  background: var(--gray-lightest);
+}
+
+tbody tr:last-child {
+  border-bottom: none;
+}
+
+td {
+  padding: var(--spacing-md) var(--spacing-lg);
+  color: var(--dark);
+}
+
+/* Columnas específicas */
+td.price,
+td.subtotal {
+  font-weight: 600;
+  font-family: var(--font-mono);
+}
+
+td.subtotal {
+  font-size: var(--font-size-lg);
+  color: var(--secondary-color);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Información del producto */
+.product-name {
+  font-weight: 600;
+  color: var(--dark);
+  margin-bottom: var(--spacing-xs);
+}
+
+.product-barcode {
+  font-size: var(--font-size-xs);
+  color: var(--gray-light);
+  font-family: var(--font-mono);
+}
+
+/* Controles de cantidad */
+.quantity-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.qty-value {
+  min-width: 30px;
+  text-align: center;
+  font-weight: bold;
+  font-size: var(--font-size-lg);
+}
+
+/* Estado vacío */
+tbody tr td[colspan] {
+  text-align: center;
+  color: var(--gray-light);
+  padding: var(--spacing-2xl);
+}
+
+tbody tr td[colspan] .icon-cart {
+  display: block;
+  margin-bottom: var(--spacing-md);
+  opacity: 0.3;
+}

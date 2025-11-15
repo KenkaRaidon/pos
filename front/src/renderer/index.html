@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; connect-src http://localhost:3000">
+    <title>Sistema POS - Punto de Venta</title>
+    <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Panel Izquierdo: Ticket de Venta -->
+        <div class="left-panel">
+            <div class="page-header">
+                <h1 class="page-title">Ticket de Venta</h1>
+                <p class="page-subtitle">Escanea productos o busca manualmente</p>
+            </div>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 50px;">#</th>
+                            <th style="width: 120px;">Cantidad</th>
+                            <th>Producto</th>
+                            <th style="width: 120px;">Precio</th>
+                            <th style="width: 150px;">Importe</th>
+                        </tr>
+                    </thead>
+                    <tbody id="cart-body">
+                        <tr>
+                            <td colspan="5" style="text-align: center; color: #95a5a6; padding: 60px;">
+                                <div class="icon-cart" style="font-size: 64px; margin-bottom: 16px; opacity: 0.3;">🛒</div>
+                                <p style="font-size: 18px; font-weight: 600;">El carrito está vacío</p>
+                                <p style="font-size: 14px; margin-top: 8px;">Escanea un producto para comenzar</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Panel Derecho: Scanner y Totales -->
+        <div class="right-panel">
+            <!-- Sección del Scanner -->
+            <div class="scanner-section">
+                <div class="input-group">
+                    <label class="input-label">
+                        🔍 ESCANEAR CÓDIGO DE BARRAS
+                    </label>
+                    <input 
+                        type="text" 
+                        id="barcode-input" 
+                        class="input barcode-input"
+                        placeholder="Escanea aquí..." 
+                        autofocus
+                        autocomplete="off"
+                    >
+                </div>
+
+                <!-- Mensaje de estado -->
+                <div id="status-msg" class="status-msg"></div>
+            </div>
+
+            <!-- Card de Total -->
+            <div class="total-card">
+                <div class="total-label">💰 TOTAL A PAGAR</div>
+                <div class="total-amount">
+                    $<span id="total-amount">0.00</span>
+                </div>
+                <div class="total-items">
+                    Total de artículos: <span id="total-items">0</span>
+                </div>
+            </div>
+
+            <!-- Botones de acción -->
+            <div class="actions-section">
+                <button id="cobrar-btn" class="btn btn-success btn-lg">
+                    💳 COBRAR (F12)
+                </button>
+                
+                <button id="clear-cart-btn" class="btn btn-danger btn-lg">
+                    🗑️ VACIAR CARRITO (ESC)
+                </button>
+            </div>
+
+            <!-- Footer info -->
+            <div class="app-footer">
+                <p>Sistema POS v1.0</p>
+                <p>Presiona F1 para enfocar el scanner</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts en orden de dependencia -->
+    <script src="js/utils/api.js"></script>
+    <script src="js/modules/cart.js"></script>
+    <script src="js/modules/products.js"></script>
+    <script src="js/modules/sales.js"></script>
+    <script src="js/modules/ui.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

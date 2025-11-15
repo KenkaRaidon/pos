@@ -1,0 +1,213 @@
+/**
+ * Main Styles - Estilos principales del POS
+ */
+
+@import url('variables.css');
+@import url('components/buttons.css');
+@import url('components/table.css');
+@import url('components/inputs.css');
+@import url('components/cards.css');
+
+/* Reset y base */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  font-family: var(--font-family);
+  background: var(--background);
+  color: var(--dark);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Layout principal */
+.app-container {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* Panel izquierdo - Lista de productos */
+.left-panel {
+  flex: 1;
+  width: 70%;
+  padding: var(--spacing-xl);
+  overflow-y: auto;
+  background: var(--background);
+}
+
+.left-panel::-webkit-scrollbar {
+  width: 8px;
+}
+
+.left-panel::-webkit-scrollbar-track {
+  background: var(--gray-lightest);
+}
+
+.left-panel::-webkit-scrollbar-thumb {
+  background: var(--gray-light);
+  border-radius: var(--border-radius-full);
+}
+
+.left-panel::-webkit-scrollbar-thumb:hover {
+  background: var(--gray);
+}
+
+/* Panel derecho - Totales y acciones */
+.right-panel {
+  width: 30%;
+  min-width: 400px;
+  padding: var(--spacing-xl);
+  background: linear-gradient(180deg, var(--dark) 0%, var(--dark-light) 100%);
+  display: flex;
+  flex-direction: column;
+  box-shadow: var(--shadow-xl);
+  overflow-y: auto;
+}
+
+/* Header */
+.page-header {
+  margin-bottom: var(--spacing-xl);
+  padding-bottom: var(--spacing-lg);
+  border-bottom: 3px solid var(--primary-color);
+}
+
+.page-title {
+  font-size: var(--font-size-2xl);
+  font-weight: 900;
+  color: var(--dark);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.page-title::before {
+  content: '🛒';
+  font-size: var(--font-size-3xl);
+}
+
+.page-subtitle {
+  font-size: var(--font-size-sm);
+  color: var(--gray);
+  margin-top: var(--spacing-sm);
+}
+
+/* Sección de scanner */
+.scanner-section {
+  margin-bottom: var(--spacing-xl);
+}
+
+/* Sección de acciones */
+.actions-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-lg);
+}
+
+/* Footer info */
+.app-footer {
+  margin-top: auto;
+  padding-top: var(--spacing-lg);
+  text-align: center;
+  font-size: var(--font-size-xs);
+  color: var(--gray-lighter);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Utilidades */
+.text-center {
+  text-align: center;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.mt-auto {
+  margin-top: auto;
+}
+
+.mb-md {
+  margin-bottom: var(--spacing-md);
+}
+
+.mb-lg {
+  margin-bottom: var(--spacing-lg);
+}
+
+.hidden {
+  display: none;
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.fade-in {
+  animation: fadeIn var(--transition-base);
+}
+
+.slide-in {
+  animation: slideIn var(--transition-base);
+}
+
+/* Responsive (opcional para pantallas pequeñas) */
+@media (max-width: 1200px) {
+  .app-container {
+    flex-direction: column;
+  }
+
+  .left-panel,
+  .right-panel {
+    width: 100%;
+    min-width: auto;
+  }
+
+  .right-panel {
+    max-height: 400px;
+  }
+}
+
+/* Modo impresión */
+@media print {
+  .right-panel,
+  .actions-section,
+  .scanner-section {
+    display: none;
+  }
+
+  .left-panel {
+    width: 100%;
+    padding: 0;
+  }
+}

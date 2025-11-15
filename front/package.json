@@ -1,0 +1,49 @@
+{
+  "name": "pos-frontend",
+  "version": "1.0.0",
+  "description": "Sistema de Punto de Venta - Frontend con Electron",
+  "main": "src/main/main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "NODE_ENV=development electron .",
+    "build": "electron-builder",
+    "build:mac": "electron-builder --mac",
+    "build:win": "electron-builder --win",
+    "build:linux": "electron-builder --linux"
+  },
+  "keywords": [
+    "pos",
+    "punto-de-venta",
+    "electron",
+    "retail"
+  ],
+  "author": "Tu Nombre",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "electron": "^39.2.0",
+    "electron-builder": "^24.0.0"
+  },
+  "build": {
+    "appId": "com.tupuntodeventa.pos",
+    "productName": "Sistema POS",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "src/**/*",
+      "package.json"
+    ],
+    "mac": {
+      "category": "public.app-category.business",
+      "target": "dmg"
+    },
+    "win": {
+      "target": "nsis"
+    },
+    "linux": {
+      "target": "AppImage",
+      "category": "Office"
+    }
+  }
+}

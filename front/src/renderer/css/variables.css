@@ -1,0 +1,68 @@
+/**
+ * Variables CSS - Definición de colores y configuraciones globales
+ */
+
+:root {
+  /* Colores principales */
+  --primary-color: #3498db;
+  --primary-dark: #2980b9;
+  --primary-light: #5dade2;
+  
+  --secondary-color: #2ecc71;
+  --secondary-dark: #27ae60;
+  --secondary-light: #58d68d;
+  
+  --danger-color: #e74c3c;
+  --danger-dark: #c0392b;
+  
+  --warning-color: #f39c12;
+  --info-color: #3498db;
+  
+  /* Colores neutros */
+  --dark: #2c3e50;
+  --dark-light: #34495e;
+  --gray: #7f8c8d;
+  --gray-light: #95a5a6;
+  --gray-lighter: #bdc3c7;
+  --gray-lightest: #ecf0f1;
+  
+  --white: #ffffff;
+  --background: #f4f6f7;
+  
+  /* Tipografía */
+  --font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+  --font-mono: 'Courier New', monospace;
+  
+  --font-size-xs: 11px;
+  --font-size-sm: 13px;
+  --font-size-base: 15px;
+  --font-size-lg: 18px;
+  --font-size-xl: 24px;
+  --font-size-2xl: 32px;
+  --font-size-3xl: 48px;
+  
+  /* Espaciado */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  --spacing-2xl: 48px;
+  
+  /* Bordes */
+  --border-radius-sm: 4px;
+  --border-radius-md: 8px;
+  --border-radius-lg: 12px;
+  --border-radius-full: 9999px;
+  
+  /* Sombras */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.12);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.15);
+  --shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.2);
+  
+  /* Transiciones */
+  --transition-fast: 150ms ease;
+  --transition-base: 250ms ease;
+  --transition-slow: 350ms ease;
+}
