@@ -18,6 +18,9 @@ class POSApp {
       uiManager.renderCart(items, total);
     });
 
+    // Inicializar el escáner de códigos de barras
+    barcodeScanner.init((barcode) => this.handleScannedBarcode(barcode));
+
     // Configurar event listeners
     this.setupEventListeners();
 
@@ -69,6 +72,23 @@ class POSApp {
     const input = e.target;
     const barcode = input.value.trim();
 
+    if (!barcode) return;
+
+    await this.processBarcode(barcode);
+  }
+
+  /**
+   * Maneja códigos de barras escaneados desde la cámara
+   */
+  async handleScannedBarcode(barcode) {
+    console.log('📷 Código escaneado desde cámara:', barcode);
+    await this.processBarcode(barcode);
+  }
+
+  /**
+   * Procesa un código de barras (desde input o cámara)
+   */
+  async processBarcode(barcode) {
     if (!barcode) return;
 
     console.log('🔍 Buscando producto:', barcode);

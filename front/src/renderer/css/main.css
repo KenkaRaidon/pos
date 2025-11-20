@@ -107,6 +107,51 @@ body {
   margin-bottom: var(--spacing-xl);
 }
 
+/* Estilos para el lector de QR/Códigos de barras */
+#qr-reader {
+  border-radius: var(--border-radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-lg);
+  background: var(--background);
+  border: 2px solid var(--primary-color);
+}
+
+#qr-reader video {
+  width: 100% !important;
+  height: auto !important;
+  border-radius: var(--border-radius-lg);
+}
+
+#qr-reader__dashboard {
+  background: var(--dark-light) !important;
+  padding: var(--spacing-sm) !important;
+}
+
+#qr-reader__dashboard_section {
+  color: var(--gray-lightest) !important;
+  font-size: var(--font-size-xs) !important;
+}
+
+#qr-reader__dashboard_section_csr {
+  text-align: center !important;
+  color: var(--primary-color) !important;
+}
+
+/* Animación cuando el scanner está activo */
+.scanner-section.active #qr-reader {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    border-color: var(--primary-color);
+  }
+  50% {
+    border-color: var(--success-color);
+    box-shadow: 0 0 20px rgba(52, 211, 153, 0.5);
+  }
+}
+
 /* Sección de acciones */
 .actions-section {
   display: flex;

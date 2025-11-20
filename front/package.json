@@ -45,5 +45,8 @@
       "target": "AppImage",
       "category": "Office"
     }
+  },
+  "dependencies": {
+    "html5-qrcode": "^2.3.8"
   }
 }

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; connect-src http://localhost:3000">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; connect-src http://localhost:3000; media-src 'self' mediastream:; img-src 'self' data: blob:;">
     <title>Sistema POS - Punto de Venta</title>
     <link rel="stylesheet" href="css/main.css">
 </head>
@@ -43,10 +43,18 @@
         <!-- Panel Derecho: Scanner y Totales -->
         <div class="right-panel">
             <!-- Sección del Scanner -->
-            <div class="scanner-section">
+            <div class="scanner-section" id="scanner-section">
+                <!-- Botón para activar/desactivar cámara -->
+                <button id="toggle-scanner-btn" class="btn btn-primary btn-lg" style="width: 100%; margin-bottom: 20px;">
+                    📷 ACTIVAR CÁMARA
+                </button>
+
+                <!-- Contenedor del escáner de cámara -->
+                <div id="qr-reader" style="display: none; margin-bottom: 20px;"></div>
+
                 <div class="input-group">
                     <label class="input-label">
-                        🔍 ESCANEAR CÓDIGO DE BARRAS
+                        🔍 O ESCANEAR CON LECTOR DE CÓDIGOS
                     </label>
                     <input 
                         type="text" 
@@ -93,10 +101,12 @@
     </div>
 
     <!-- Scripts en orden de dependencia -->
+    <script src="../../node_modules/html5-qrcode/html5-qrcode.min.js"></script>
     <script src="js/utils/api.js"></script>
     <script src="js/modules/cart.js"></script>
     <script src="js/modules/products.js"></script>
     <script src="js/modules/sales.js"></script>
+    <script src="js/modules/scanner.js"></script>
     <script src="js/modules/ui.js"></script>
     <script src="js/app.js"></script>
 </body>
