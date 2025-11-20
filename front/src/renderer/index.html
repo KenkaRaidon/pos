@@ -100,6 +100,139 @@
         </div>
     </div>
 
+    <!-- Modal de Registro Rápido -->
+    <div id="quick-register-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">⚡ Producto No Encontrado</h2>
+                <p class="modal-subtitle">¿Quieres registrar este producto nuevo?</p>
+            </div>
+
+            <form id="quick-register-form" class="modal-body">
+                <div class="input-group">
+                    <label class="input-label" for="qr-barcode">
+                        📦 Código de Barras
+                    </label>
+                    <input 
+                        type="text" 
+                        id="qr-barcode" 
+                        class="input"
+                        readonly
+                        style="background: #f8f9fa; cursor: not-allowed;"
+                    >
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label" for="qr-name">
+                        🏷️ Nombre del Producto *
+                    </label>
+                    <input 
+                        type="text" 
+                        id="qr-name" 
+                        class="input"
+                        placeholder="Ej: Coca-Cola 600ml"
+                        required
+                        autofocus
+                    >
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label" for="qr-description">
+                        📝 Descripción
+                    </label>
+                    <textarea 
+                        id="qr-description" 
+                        class="input"
+                        placeholder="Descripción del producto (opcional)"
+                        rows="2"
+                    ></textarea>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                    <div class="input-group">
+                        <label class="input-label" for="qr-cost-price">
+                            💰 Precio de Costo *
+                        </label>
+                        <input 
+                            type="number" 
+                            id="qr-cost-price" 
+                            class="input"
+                            placeholder="0.00"
+                            step="0.01"
+                            min="0"
+                            required
+                        >
+                    </div>
+
+                    <div class="input-group">
+                        <label class="input-label" for="qr-sale-price">
+                            💵 Precio de Venta *
+                        </label>
+                        <input 
+                            type="number" 
+                            id="qr-sale-price" 
+                            class="input"
+                            placeholder="0.00"
+                            step="0.01"
+                            min="0.01"
+                            required
+                        >
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                    <div class="input-group">
+                        <label class="input-label" for="qr-current-stock">
+                            📦 Stock Inicial
+                        </label>
+                        <input 
+                            type="number" 
+                            id="qr-current-stock" 
+                            class="input"
+                            placeholder="0"
+                            min="0"
+                            value="0"
+                        >
+                    </div>
+
+                    <div class="input-group">
+                        <label class="input-label" for="qr-min-stock">
+                            ⚠️ Stock Mínimo
+                        </label>
+                        <input 
+                            type="number" 
+                            id="qr-min-stock" 
+                            class="input"
+                            placeholder="5"
+                            min="0"
+                            value="5"
+                        >
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label" style="display: flex; align-items: center; gap: 8px;">
+                        <input 
+                            type="checkbox" 
+                            id="qr-is-bulk"
+                            style="width: auto; height: auto;"
+                        >
+                        ⚖️ Producto a Granel (se vende por peso)
+                    </label>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" id="qr-cancel-btn" class="btn btn-secondary btn-lg">
+                        ❌ CANCELAR
+                    </button>
+                    <button type="submit" id="qr-save-btn" class="btn btn-success btn-lg">
+                        💾 GUARDAR Y AGREGAR
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- Scripts en orden de dependencia -->
     <script src="../../node_modules/html5-qrcode/html5-qrcode.min.js"></script>
     <script src="js/utils/api.js"></script>
@@ -107,6 +240,7 @@
     <script src="js/modules/products.js"></script>
     <script src="js/modules/sales.js"></script>
     <script src="js/modules/scanner.js"></script>
+    <script src="js/modules/quick-register.js"></script>
     <script src="js/modules/ui.js"></script>
     <script src="js/app.js"></script>
 </body>

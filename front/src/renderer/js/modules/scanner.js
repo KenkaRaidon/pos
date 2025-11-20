@@ -8,6 +8,9 @@ class BarcodeScanner {
     this.html5QrCode = null;
     this.isScanning = false;
     this.onScanCallback = null;
+    this.lastScannedCode = null;
+    this.lastScanTime = 0;
+    this.scanCooldown = 4000; // 4 segundos de cooldown entre escaneos del mismo código
     this.config = {
       fps: 10,
       qrbox: { width: 300, height: 150 },
@@ -147,6 +150,8 @@ class BarcodeScanner {
       await this.html5QrCode.stop();
       this.html5QrCode.clear();
       this.isScanning = false;
+      this.lastScannedCode = null; // Resetear el último código escaneado
+      this.lastScanTime = 0;
       this.updateUI(false);
       console.log('🛑 Escáner detenido');
     } catch (error) {
@@ -169,6 +174,19 @@ class BarcodeScanner {
    * Callback cuando se escanea exitosamente
    */
   onScanSuccess(decodedText, decodedResult) {
+    const currentTime = Date.now();
+    
+    // Verificar si es el mismo código y si está dentro del período de cooldown
+    if (this.lastScannedCode === decodedText && 
+        (currentTime - this.lastScanTime) < this.scanCooldown) {
+      // Ignorar escaneos duplicados dentro del período de cooldown
+      return;
+    }
+    
+    // Actualizar el último código escaneado y tiempo
+    this.lastScannedCode = decodedText;
+    this.lastScanTime = currentTime;
+    
     console.log('📦 Código escaneado:', decodedText);
     
     // Llamar al callback proporcionado

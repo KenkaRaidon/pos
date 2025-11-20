@@ -21,6 +21,9 @@ class POSApp {
     // Inicializar el escáner de códigos de barras
     barcodeScanner.init((barcode) => this.handleScannedBarcode(barcode));
 
+    // Inicializar el registro rápido
+    quickRegister.init();
+
     // Configurar event listeners
     this.setupEventListeners();
 
@@ -115,8 +118,25 @@ class POSApp {
       
     } catch (error) {
       console.error('❌ Error al buscar producto:', error);
-      uiManager.showMessage(error.message, 'error');
-      uiManager.playErrorSound();
+      
+      // FLUJO DE INTERRUPCIÓN POSITIVA
+      // Si el producto no existe, abrir modal de registro rápido
+      if (error.message.includes('no encontrado') || error.message.includes('not found')) {
+        console.log('⚡ Producto no encontrado, abriendo registro rápido...');
+        uiManager.showMessage('🔍 Producto no encontrado', 'warning', 2000);
+        
+        // Abrir modal de registro rápido
+        quickRegister.open(barcode, (newProduct) => {
+          // Callback: cuando se registre el producto, agregarlo al carrito
+          console.log('✅ Producto registrado, agregando al carrito:', newProduct);
+          cartManager.addProduct(newProduct);
+          uiManager.playSuccessSound();
+        });
+      } else {
+        // Otro tipo de error
+        uiManager.showMessage(error.message, 'error');
+        uiManager.playErrorSound();
+      }
     } finally {
       uiManager.showLoading(false);
       uiManager.clearInput();
