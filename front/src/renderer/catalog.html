@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; connect-src http://localhost:3000;">
+    <title>Catálogo de Productos - Sistema POS</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/catalog.css">
+</head>
+<body>
+    <div class="catalog-container">
+        <!-- Header con navegación -->
+        <header class="catalog-header">
+            <div class="header-content">
+                <h1 class="catalog-title">📦 Catálogo de Productos</h1>
+                <div class="header-actions">
+                    <button id="new-product-btn" class="btn btn-primary">
+                        ➕ Nuevo Producto
+                    </button>
+                    <a href="index.html" class="btn btn-secondary">
+                        ← Volver al POS
+                    </a>
+                </div>
+            </div>
+        </header>
+
+        <!-- Barra de búsqueda y filtros -->
+        <div class="search-section">
+            <div class="search-bar">
+                <input 
+                    type="text" 
+                    id="search-input" 
+                    class="input search-input"
+                    placeholder="🔍 Buscar por nombre o código de barras..."
+                >
+            </div>
+            <div class="filters">
+                <select id="filter-active" class="input">
+                    <option value="all">Todos los productos</option>
+                    <option value="active" selected>Solo activos</option>
+                    <option value="inactive">Solo inactivos</option>
+                </select>
+                <select id="filter-stock" class="input">
+                    <option value="all">Todo el stock</option>
+                    <option value="low">Stock bajo</option>
+                    <option value="out">Sin stock</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Tabla de productos -->
+        <div class="table-wrapper">
+            <table class="products-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Código</th>
+                        <th>Nombre</th>
+                        <th>Descripción</th>
+                        <th>Costo</th>
+                        <th>Venta</th>
+                        <th>Stock</th>
+                        <th>Min</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="products-tbody">
+                    <tr>
+                        <td colspan="10" class="loading-row">
+                            <div class="loading-spinner">⏳ Cargando productos...</div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Paginación (opcional) -->
+        <div class="pagination">
+            <div id="products-count" class="products-count">
+                Total de productos: <strong>0</strong>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de edición/creación -->
+    <div id="product-modal" class="modal">
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h2 class="modal-title" id="modal-title">📦 Nuevo Producto</h2>
+                <button type="button" class="close-btn" id="close-modal-btn">✕</button>
+            </div>
+
+            <form id="product-form" class="modal-body">
+                <input type="hidden" id="product-id">
+                
+                <!-- Scanner Section -->
+                <div class="scanner-box">
+                    <div class="scanner-header">
+                        <span class="scanner-label">📷 Escanear Código de Barras</span>
+                        <button type="button" id="toggle-catalog-scanner-btn" class="btn-scanner">
+                            Activar Cámara
+                        </button>
+                    </div>
+                    <div id="catalog-qr-reader" style="display: none;"></div>
+                </div>
+                
+                <div class="input-group">
+                    <label class="input-label" for="product-barcode">
+                        📦 Código de Barras *
+                    </label>
+                    <div style="display: flex; gap: 8px;">
+                        <input 
+                            type="text" 
+                            id="product-barcode" 
+                            class="input"
+                            placeholder="Ej: 7501234567890"
+                            required
+                        >
+                        <button type="button" id="verify-barcode-btn" class="btn btn-primary" style="white-space: nowrap;">
+                            🔍 Verificar
+                        </button>
+                    </div>
+                    <div id="barcode-validation-msg" class="validation-msg"></div>
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label" for="product-name">
+                        🏷️ Nombre del Producto *
+                    </label>
+                    <input 
+                        type="text" 
+                        id="product-name" 
+                        class="input"
+                        placeholder="Ej: Coca-Cola 600ml"
+                        required
+                    >
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label" for="product-description">
+                        📝 Descripción
+                    </label>
+                    <textarea 
+                        id="product-description" 
+                        class="input"
+                        placeholder="Descripción del producto (opcional)"
+                        rows="3"
+                    ></textarea>
+                </div>
+
+                <div class="form-grid">
+                    <div class="input-group">
+                        <label class="input-label" for="product-cost-price">
+                            💰 Precio de Costo *
+                        </label>
+                        <input 
+                            type="number" 
+                            id="product-cost-price" 
+                            class="input"
+                            placeholder="0.00"
+                            step="0.01"
+                            min="0"
+                            required
+                        >
+                    </div>
+
+                    <div class="input-group">
+                        <label class="input-label" for="product-sale-price">
+                            💵 Precio de Venta *
+                        </label>
+                        <input 
+                            type="number" 
+                            id="product-sale-price" 
+                            class="input"
+                            placeholder="0.00"
+                            step="0.01"
+                            min="0.01"
+                            required
+                        >
+                    </div>
+                </div>
+
+                <div class="form-grid">
+                    <div class="input-group">
+                        <label class="input-label" for="product-current-stock">
+                            📦 Stock Actual
+                        </label>
+                        <input 
+                            type="number" 
+                            id="product-current-stock" 
+                            class="input"
+                            placeholder="0"
+                            min="0"
+                            value="0"
+                        >
+                    </div>
+
+                    <div class="input-group">
+                        <label class="input-label" for="product-min-stock">
+                            ⚠️ Stock Mínimo
+                        </label>
+                        <input 
+                            type="number" 
+                            id="product-min-stock" 
+                            class="input"
+                            placeholder="5"
+                            min="0"
+                            value="5"
+                        >
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label checkbox-label">
+                        <input 
+                            type="checkbox" 
+                            id="product-is-bulk"
+                        >
+                        ⚖️ Producto a Granel (se vende por peso)
+                    </label>
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label checkbox-label">
+                        <input 
+                            type="checkbox" 
+                            id="product-is-active"
+                            checked
+                        >
+                        ✅ Producto Activo
+                    </label>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" id="cancel-btn" class="btn btn-secondary btn-lg">
+                        ❌ Cancelar
+                    </button>
+                    <button type="submit" id="save-btn" class="btn btn-success btn-lg">
+                        💾 Guardar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../../node_modules/html5-qrcode/html5-qrcode.min.js"></script>
+    <script src="js/utils/api.js"></script>
+    <script src="js/modules/scanner.js"></script>
+    <script src="js/catalog.js"></script>
+</body>
+</html>

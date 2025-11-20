@@ -66,6 +66,16 @@ class ApiClient {
   }
 
   /**
+   * PATCH request
+   */
+  async patch(endpoint, data) {
+    return this.request(endpoint, {
+      method: 'PATCH',
+      body: JSON.stringify(data)
+    });
+  }
+
+  /**
    * DELETE request
    */
   async delete(endpoint) {

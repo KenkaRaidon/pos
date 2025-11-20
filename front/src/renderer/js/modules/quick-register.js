@@ -185,9 +185,58 @@ class QuickRegister {
       return;
     }
 
+    const barcode = this.barcodeInput.value.trim();
+
+    // Verificar si el código de barras ya existe
+    try {
+      const existingProduct = await apiClient.get(`/products/barcode/${barcode}`).catch(() => null);
+      
+      if (existingProduct) {
+        const useExisting = confirm(
+          `⚠️ PRODUCTO YA EXISTE\n\n` +
+          `Código: ${existingProduct.barcode}\n` +
+          `Nombre: ${existingProduct.name}\n` +
+          `Precio: $${parseFloat(existingProduct.salePrice).toFixed(2)}\n\n` +
+          `¿Deseas agregarlo al carrito en lugar de crear uno nuevo?`
+        );
+
+        if (useExisting) {
+          // Agregar el producto existente al carrito
+          const product = {
+            id: existingProduct.id,
+            name: existingProduct.name,
+            barcode: existingProduct.barcode,
+            price: parseFloat(existingProduct.salePrice),
+            cost: parseFloat(existingProduct.costPrice || 0),
+            stock: existingProduct.currentStock || 0
+          };
+
+          this.close();
+
+          if (this.onSuccessCallback && typeof this.onSuccessCallback === 'function') {
+            this.onSuccessCallback(product);
+          }
+
+          if (typeof uiManager !== 'undefined') {
+            uiManager.showMessage(`✓ ${product.name} agregado al carrito`, 'success', 3000);
+          }
+
+          return;
+        } else {
+          // El usuario no quiere usar el existente, mostrar mensaje
+          alert('Por favor cambia el código de barras para crear un producto nuevo.');
+          this.barcodeInput.focus();
+          return;
+        }
+      }
+    } catch (error) {
+      // Si hay error en la verificación, continuar con el guardado
+      console.log('Producto no existe, procediendo a crear...');
+    }
+
     // Obtener datos del formulario
     const productData = {
-      barcode: this.barcodeInput.value.trim(),
+      barcode: barcode,
       name: this.nameInput.value.trim(),
       description: this.descriptionInput.value.trim() || null,
       costPrice: parseFloat(this.costPriceInput.value),
@@ -233,7 +282,13 @@ class QuickRegister {
 
     } catch (error) {
       console.error('❌ Error al guardar producto:', error);
-      alert(`Error al guardar: ${error.message}`);
+      
+      // Manejar errores específicos
+      if (error.message.includes('unique') || error.message.includes('duplicate')) {
+        alert('⚠️ Error: El código de barras ya existe en la base de datos.');
+      } else {
+        alert(`Error al guardar: ${error.message}`);
+      }
     } finally {
       this.setLoading(false);
     }
