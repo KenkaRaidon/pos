@@ -141,20 +141,49 @@ class UIManager {
   }
 
   /**
-   * Muestra el modal de cobro
+   * Muestra modal de pago y retorna método seleccionado
    */
   showPaymentModal(total) {
-    // TODO: Implementar modal de pago
     return new Promise((resolve) => {
-      const paymentMethod = prompt(`Total a cobrar: $${total.toFixed(2)}\n\nMétodo de pago:\n1. Efectivo\n2. Tarjeta\n3. Transferencia`);
-      
-      const methods = {
-        '1': 'CASH',
-        '2': 'CARD',
-        '3': 'TRANSFER'
+      const modal = document.getElementById('payment-modal');
+      const totalText = document.getElementById('payment-total-text');
+      const cancelBtn = document.getElementById('payment-cancel-btn');
+      const methodButtons = document.querySelectorAll('.payment-method-btn');
+
+      // Actualizar total
+      totalText.textContent = `Total: $${total.toFixed(2)}`;
+
+      // Mostrar modal
+      modal.style.display = 'flex';
+
+      // Manejador para los botones de método de pago
+      const handleMethodClick = (e) => {
+        const method = e.currentTarget.dataset.method;
+        cleanup();
+        modal.style.display = 'none';
+        resolve(method);
       };
 
-      resolve(methods[paymentMethod] || 'CASH');
+      // Manejador para cancelar
+      const handleCancel = () => {
+        cleanup();
+        modal.style.display = 'none';
+        resolve(null);
+      };
+
+      // Agregar event listeners
+      methodButtons.forEach(btn => {
+        btn.addEventListener('click', handleMethodClick);
+      });
+      cancelBtn.addEventListener('click', handleCancel);
+
+      // Cleanup function
+      const cleanup = () => {
+        methodButtons.forEach(btn => {
+          btn.removeEventListener('click', handleMethodClick);
+        });
+        cancelBtn.removeEventListener('click', handleCancel);
+      };
     });
   }
 

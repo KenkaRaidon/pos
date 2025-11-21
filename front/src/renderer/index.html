@@ -236,8 +236,47 @@
         </div>
     </div>
 
+    <!-- Modal de Pago -->
+    <div id="payment-modal" class="modal">
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="modal-header">
+                <h2 class="modal-title">💰 Cobrar Venta</h2>
+                <p class="modal-subtitle" id="payment-total-text">Total: $0.00</p>
+            </div>
+
+            <div class="modal-body" style="padding: 30px;">
+                <div class="input-group">
+                    <label class="input-label">
+                        💳 Selecciona el método de pago
+                    </label>
+                    <div style="display: grid; gap: 15px; margin-top: 15px;">
+                        <button type="button" class="btn btn-primary btn-lg payment-method-btn" data-method="CASH" style="display: flex; align-items: center; justify-content: center; gap: 12px; font-size: 18px; padding: 20px;">
+                            <span style="font-size: 32px;">💵</span>
+                            <span>EFECTIVO</span>
+                        </button>
+                        <button type="button" class="btn btn-primary btn-lg payment-method-btn" data-method="CARD" style="display: flex; align-items: center; justify-content: center; gap: 12px; font-size: 18px; padding: 20px;">
+                            <span style="font-size: 32px;">💳</span>
+                            <span>TARJETA</span>
+                        </button>
+                        <button type="button" class="btn btn-primary btn-lg payment-method-btn" data-method="TRANSFER" style="display: flex; align-items: center; justify-content: center; gap: 12px; font-size: 18px; padding: 20px;">
+                            <span style="font-size: 32px;">📱</span>
+                            <span>TRANSFERENCIA</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" id="payment-cancel-btn" class="btn btn-secondary btn-lg">
+                    ❌ CANCELAR
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Scripts en orden de dependencia -->
     <script src="../../node_modules/html5-qrcode/html5-qrcode.min.js"></script>
+    <script src="../../node_modules/jspdf/dist/jspdf.umd.min.js"></script>
     <script src="js/utils/api.js"></script>
     <script src="js/modules/cart.js"></script>
     <script src="js/modules/products.js"></script>

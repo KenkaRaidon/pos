@@ -40,8 +40,8 @@ function createWindow() {
     autoHideMenuBar: true, // Ocultar barra de menú (producción)
   });
 
-  // Cargar el HTML
-  mainWindow.loadFile(path.join(__dirname, '../renderer/index.html'));
+  // Cargar el HTML (comenzar con login)
+  mainWindow.loadFile(path.join(__dirname, '../renderer/login.html'));
 
   // Mostrar ventana cuando esté lista
   mainWindow.once('ready-to-show', () => {

@@ -3,88 +3,102 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log('🌱 Iniciando seed de datos...');
+  console.log('🌱 Iniciando seed...');
 
-  // Limpiar datos existentes (opcional)
-  await prisma.product.deleteMany();
-  console.log('🗑️  Datos anteriores eliminados');
+  // Crear usuario admin por defecto
+  const admin = await prisma.user.upsert({
+    where: { username: 'admin' },
+    update: {},
+    create: {
+      username: 'admin',
+      password: 'admin123', // TODO: En producción usar bcrypt
+      name: 'Administrador',
+      role: 'ADMIN',
+      isActive: true,
+    },
+  });
+
+  // Crear cajero por defecto
+  const cajero = await prisma.user.upsert({
+    where: { username: 'cajero' },
+    update: {},
+    create: {
+      username: 'cajero',
+      password: 'cajero123', // TODO: En producción usar bcrypt
+      name: 'Cajero Principal',
+      role: 'CAJERO',
+      isActive: true,
+    },
+  });
+
+  console.log('✅ Usuarios creados:', { admin, cajero });
+
+  // Crear categorías
+  const bebidas = await prisma.category.upsert({
+    where: { id: 1 },
+    update: {},
+    create: { name: 'Bebidas' },
+  });
+
+  const abarrotes = await prisma.category.upsert({
+    where: { id: 2 },
+    update: {},
+    create: { name: 'Abarrotes' },
+  });
+
+  console.log('✅ Categorías creadas:', { bebidas, abarrotes });
 
   // Crear productos de ejemplo
-  const products = [
+  const productos = [
     {
-      barcode: '75010553',
+      barcode: '7501234567890',
       name: 'Coca Cola 600ml',
-      costPrice: 12.5,
-      salePrice: 18,
-      currentStock: 24,
-      minStock: 5,
+      description: 'Refresco de cola',
+      costPrice: 10,
+      salePrice: 15,
+      currentStock: 50,
+      minStock: 10,
+      categoryId: bebidas.id,
     },
     {
-      barcode: '7501000153107',
-      name: 'Pan Bimbo Grande',
-      costPrice: 38,
-      salePrice: 52,
-      currentStock: 20,
-      minStock: 5,
+      barcode: '7501234567891',
+      name: 'Sabritas Original 45g',
+      description: 'Papas fritas',
+      costPrice: 8,
+      salePrice: 12,
+      currentStock: 100,
+      minStock: 20,
+      categoryId: abarrotes.id,
     },
     {
-      barcode: '7501030490832',
-      name: 'Tortillinas Tia Rosa',
-      costPrice: 18,
-      salePrice: 26,
-      currentStock: 30,
-      minStock: 8,
-    },
-    {
-      barcode: '7501040094321',
+      barcode: '7501234567892',
       name: 'Leche Lala 1L',
-      costPrice: 22,
-      salePrice: 29,
-      currentStock: 40,
-      minStock: 10,
-    },
-    {
-      barcode: '7501020663123',
-      name: 'Aceite 1-2-3',
-      costPrice: 35,
-      salePrice: 48.5,
-      currentStock: 20,
+      description: 'Leche entera',
+      costPrice: 18,
+      salePrice: 25,
+      currentStock: 30,
       minStock: 5,
-    },
-    {
-      barcode: '7500478007904',
-      name: 'Jabon Zote',
-      costPrice: 15,
-      salePrice: 22,
-      currentStock: 25,
-      minStock: 10,
-    },
-    {
-      barcode: '7501000612345',
-      name: 'Sabritas Adobadas',
-      costPrice: 11,
-      salePrice: 17,
-      currentStock: 15,
-      minStock: 5,
+      categoryId: abarrotes.id,
     },
   ];
 
-  for (const product of products) {
-    await prisma.product.create({
-      data: product,
+  for (const prod of productos) {
+    await prisma.product.upsert({
+      where: { barcode: prod.barcode },
+      update: {},
+      create: prod,
     });
   }
 
-  console.log(`✅ ${products.length} productos creados`);
+  console.log('✅ Productos creados');
+  console.log('🎉 Seed completado exitosamente');
 }
 
 main()
-  .then(async () => {
-    await prisma.$disconnect();
-    console.log('🎉 Seed completado exitosamente');
-  })
-  .catch(async (e) => {
-    console.error('❌ Error durante el seed:', e);
-    await prisma.$disconnect();
+  .catch((e) => {
+    console.error('❌ Error en seed:', e);
     process.exit(1);
+  })
+  .finally(async () => {
+    await prisma.$disconnect();
   });

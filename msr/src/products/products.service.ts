@@ -10,10 +10,19 @@ export class ProductsService {
   constructor(private prisma: PrismaService) {}
 
   async create(createProductDto: CreateProductDto) {
-    // Guardamos en la DB
-    return await this.prisma.product.create({
-      data: createProductDto,
-    });
+    try {
+      // Guardamos en la DB
+      return await this.prisma.product.create({
+        data: createProductDto,
+      });
+    } catch (error) {
+      // Manejar error de código de barras duplicado
+      if (error.code === 'P2002' && error.meta?.target?.includes('barcode')) {
+        throw new Error(`El código de barras "${createProductDto.barcode}" ya existe en otro producto`);
+      }
+      // Re-lanzar otros errores
+      throw error;
+    }
   }
 
   async findAll() {
@@ -36,11 +45,20 @@ export class ProductsService {
     });
   }
 
-  update(id: number, updateProductDto: UpdateProductDto) {
-    return this.prisma.product.update({
-      where: { id },
-      data: updateProductDto,
-    });
+  async update(id: number, updateProductDto: UpdateProductDto) {
+    try {
+      return await this.prisma.product.update({
+        where: { id },
+        data: updateProductDto,
+      });
+    } catch (error) {
+      // Manejar error de código de barras duplicado
+      if (error.code === 'P2002' && error.meta?.target?.includes('barcode')) {
+        throw new Error(`El código de barras "${updateProductDto.barcode}" ya existe en otro producto`);
+      }
+      // Re-lanzar otros errores
+      throw error;
+    }
   }
 
   remove(id: number) {

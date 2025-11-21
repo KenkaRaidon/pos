@@ -10,7 +10,9 @@ class BarcodeScanner {
     this.onScanCallback = null;
     this.lastScannedCode = null;
     this.lastScanTime = 0;
-    this.scanCooldown = 4000; // 4 segundos de cooldown entre escaneos del mismo código
+    this.scanCooldown = 2000; // 2 segundos de cooldown entre escaneos del mismo código
+    this.audioContext = null;
+    this.audioInitialized = false;
     this.config = {
       fps: 10,
       qrbox: { width: 300, height: 150 },
@@ -40,8 +42,36 @@ class BarcodeScanner {
       ];
     }
     
+    // Inicializar audio context
+    this.initAudio();
+    
     this.setupEventListeners();
     console.log('📷 Scanner inicializado');
+  }
+
+  /**
+   * Inicializa el contexto de audio
+   */
+  initAudio() {
+    try {
+      this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      
+      // Reanudar el contexto si está suspendido (política de Chrome)
+      if (this.audioContext.state === 'suspended') {
+        // Intentar reanudar con la primera interacción del usuario
+        document.addEventListener('click', () => {
+          if (this.audioContext.state === 'suspended') {
+            this.audioContext.resume();
+          }
+        }, { once: true });
+      }
+      
+      this.audioInitialized = true;
+      console.log('🔊 Audio inicializado');
+    } catch (error) {
+      console.error('Error al inicializar audio:', error);
+      this.audioInitialized = false;
+    }
   }
 
   /**
@@ -189,6 +219,9 @@ class BarcodeScanner {
     
     console.log('📦 Código escaneado:', decodedText);
     
+    // Reproducir sonido beep
+    this.playBeep();
+    
     // Llamar al callback proporcionado
     if (this.onScanCallback && typeof this.onScanCallback === 'function') {
       this.onScanCallback(decodedText);
@@ -196,6 +229,55 @@ class BarcodeScanner {
 
     // Opcional: detener el escáner después de un escaneo exitoso
     // this.stopScanner();
+  }
+
+  /**
+   * Reproduce un sonido beep al escanear
+   */
+  playBeep() {
+    // Método 1: Web Audio API
+    if (this.audioInitialized && this.audioContext) {
+      try {
+        // Reanudar el contexto si está suspendido
+        if (this.audioContext.state === 'suspended') {
+          this.audioContext.resume();
+        }
+
+        const oscillator = this.audioContext.createOscillator();
+        const gainNode = this.audioContext.createGain();
+
+        // Configurar el oscilador
+        oscillator.type = 'square'; // square da un sonido más de "beep"
+        oscillator.frequency.setValueAtTime(1200, this.audioContext.currentTime); // 1200Hz
+        
+        // Configurar el volumen con envelope
+        gainNode.gain.setValueAtTime(0.5, this.audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.15);
+
+        // Conectar nodos
+        oscillator.connect(gainNode);
+        gainNode.connect(this.audioContext.destination);
+
+        // Reproducir
+        oscillator.start(this.audioContext.currentTime);
+        oscillator.stop(this.audioContext.currentTime + 0.15);
+
+        console.log('🔊 Beep reproducido');
+        return;
+      } catch (error) {
+        console.error('Error con Web Audio API:', error);
+      }
+    }
+
+    // Método 2: Fallback - Usar data URL con Audio
+    try {
+      // Crear un beep sintético usando data URL
+      const audio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBTGH0fPTgjMGHm7A7+OZRQ0PVqzn77BdGAg+lutqzk4IC0mq5O20aCIGMYvS9M+ANwgabLjy6KBNEB5dt+jrrkQMAjaOzvDVhDIGHW+/8emaTQ4PVKvo8rBfGgc4jtDz0YM0BhxnvfHqoUsQGl+55euqUAwEOYzP8tiBMwYbbLrx6KBNEBxdt+jrsU8OBTiOzvDUhTQGHGy58emgSxATXrjn6q5PDwQ4js/w1IQzBRxtvO/pm00QFF235+utUQ4EOYzP8teCMwUca7vw6aJMEBVdt+frrVEOBDmMz/HYgzIFHWu88OmhSxAWXbfn6q1RDgQ5jM/y2IMzBRxru/Dp');
+      audio.volume = 0.5;
+      audio.play().catch(e => console.log('Error reproduciendo audio:', e));
+    } catch (error) {
+      console.error('Error con Audio fallback:', error);
+    }
   }
 
   /**

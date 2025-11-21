@@ -4,6 +4,7 @@
 
 class POSApp {
   constructor() {
+    this.currentUser = null;
     this.init();
   }
 
@@ -13,6 +14,9 @@ class POSApp {
   init() {
     console.log('🚀 Iniciando POS...');
     
+    // Verificar autenticación
+    this.checkAuth();
+
     // Suscribir a cambios del carrito
     cartManager.subscribe((items, total) => {
       uiManager.renderCart(items, total);
@@ -29,9 +33,61 @@ class POSApp {
 
     // Renderizar estado inicial
     uiManager.renderCart(cartManager.getItems(), cartManager.getTotal());
-    uiManager.focusInput();
 
-    console.log('✅ POS listo');
+    console.log('✅ POS iniciado correctamente');
+  }
+
+  /**
+   * Verifica la autenticación del usuario
+   */
+  checkAuth() {
+    const userJson = sessionStorage.getItem('currentUser');
+    
+    if (!userJson) {
+      window.location.href = 'login.html';
+      return;
+    }
+
+    try {
+      this.currentUser = JSON.parse(userJson);
+      console.log('👤 Usuario logueado:', this.currentUser.name);
+      
+      // Actualizar UI con nombre de usuario
+      this.updateUserInfo();
+    } catch (error) {
+      console.error('Error al parsear usuario:', error);
+      window.location.href = 'login.html';
+    }
+  }
+
+  /**
+   * Actualiza información del usuario en la UI
+   */
+  updateUserInfo() {
+    const header = document.querySelector('.page-header');
+    if (header && this.currentUser) {
+      const userBadge = document.createElement('div');
+      userBadge.style.cssText = 'position: absolute; top: 20px; right: 20px; background: #3498db; color: white; padding: 8px 16px; border-radius: 20px; font-size: 14px; display: flex; align-items: center; gap: 8px;';
+      userBadge.innerHTML = `
+        <span>👤 ${this.currentUser.name}</span>
+        <button id="logout-btn" style="background: transparent; border: none; color: white; cursor: pointer; font-size: 16px; padding: 0; margin-left: 8px;" title="Cerrar sesión">🚪</button>
+      `;
+      header.style.position = 'relative';
+      header.appendChild(userBadge);
+
+      // Evento para cerrar sesión
+      document.getElementById('logout-btn').addEventListener('click', () => {
+        this.logout();
+      });
+    }
+  }
+
+  /**
+   * Cierra sesión
+   */
+  logout() {
+    sessionStorage.removeItem('currentUser');
+    window.location.href = 'login.html';
   }
 
   /**
@@ -195,6 +251,11 @@ class POSApp {
     // Mostrar modal de pago
     const paymentMethod = await uiManager.showPaymentModal(total);
 
+    // Si se canceló, no hacer nada
+    if (!paymentMethod) {
+      return;
+    }
+
     try {
       uiManager.showLoading(true);
       
@@ -202,17 +263,21 @@ class POSApp {
       const cartData = cartManager.exportForSale();
       const sale = await salesManager.saveSale(cartData, paymentMethod);
 
-      // Imprimir ticket
-      await salesManager.printTicket(sale);
+      // Generar ticket PDF
+      try {
+        await salesManager.printTicket(sale);
+        uiManager.showMessage(`✓ Venta completada: $${total.toFixed(2)}\n📄 Ticket descargado`, 'success', 4000);
+      } catch (pdfError) {
+        console.error('Error al generar PDF:', pdfError);
+        uiManager.showMessage(`✓ Venta guardada pero el ticket no se pudo generar`, 'warning', 4000);
+      }
 
       // Limpiar carrito
       cartManager.clear();
-
-      uiManager.showMessage(`✓ Venta completada: $${total.toFixed(2)}`, 'success', 3000);
       
     } catch (error) {
       console.error('Error al procesar venta:', error);
-      uiManager.showMessage(`Error: ${error.message}`, 'error');
+      uiManager.showMessage(`❌ Error al procesar venta:\n${error.message}`, 'error', 5000);
     } finally {
       uiManager.showLoading(false);
       uiManager.focusInput();
